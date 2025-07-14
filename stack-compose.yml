@@ -1,0 +1,43 @@
+services:
+  redis:
+    image: redis:7
+    container_name: redis-12
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+  laravel:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    container_name: laravel-12
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: laravel-12
+      DB_USERNAME: laravel-12
+      DB_PASSWORD: secret
+      REDIS_HOST: redis-12
+      REDIS_PORT: 6379
+    depends_on:
+      - db
+      - redis
+    command: php artisan serve --host=0.0.0.0 --port=8000
+  db:
+    image: mysql:8
+    container_name: mysql-12
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel-12
+      MYSQL_USER: laravel-12
+      MYSQL_PASSWORD: secret
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+volumes:
+  db_data:
