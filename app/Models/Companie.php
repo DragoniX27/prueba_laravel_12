@@ -16,7 +16,7 @@ class Companie extends Model
 
     public function subscriptions()
     {
-        return $this->hasMany(Subscription::class);
+        return $this->hasMany(Subscription::class, 'company_id');
     }
 
     public function users()

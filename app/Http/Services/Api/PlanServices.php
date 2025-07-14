@@ -12,7 +12,7 @@ class PlanServices
     {
         $plans = Plan::all();
 
-        return response()->json($plans);
+        return response()->json(['message' => 'Planes retornados con existo', 'data' => $plans], 201);
     }
 
     public function store(Request $request)
