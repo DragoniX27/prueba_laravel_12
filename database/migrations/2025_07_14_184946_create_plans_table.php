@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('limit_users')->default(1);
             $table->longText('features')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
