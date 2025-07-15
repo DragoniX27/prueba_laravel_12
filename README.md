@@ -5,11 +5,12 @@ Este proyecto es la prueba técnica para el backend **Senior Backend Laravel 12 
 - **Laravel 12** + PHP 8.4
 - **Docker / Docker Compose** para entorno aislado
 - **MySQL 8** como base de datos
-- **API RESTful** con versionado (`/api/v1`)
+- **API RESTful** (`/api/`)
 - **Autenticación** con **Laravel Sanctum**
 - **Roles & Permisos** con **Spatie Laravel Permission**
 - **SoftDeletes**, **suscripciones**, y control de límite de usuarios por plan
 - **DDD / Clean Architecture**: Capas de Domain, Application, Infrastructure, Interfaces
+- **Manejo de sesion en Redis**: Se maneja el archivo de sesion en cache
 
 ---
 
@@ -19,12 +20,12 @@ Este proyecto es la prueba técnica para el backend **Senior Backend Laravel 12 
 
 ```bash
 git clone git@github.com:DragoniX27/prueba_laravel_12.git
-```bash
+```
 
 ### 2. Monta el proyecto
 ```bash
 ./setup.sh
-```bash
+```
 
 ### 3. ¡Listo! Visita: http://localhost:8000/api/login para loguearte
 
@@ -48,7 +49,7 @@ $middleware->alias([
 ]);
 ##🧭 Estructura del proyecto
 
-text
+```text
 app/
 ├── Domain/             // Entidades, ValueObjects, Reglas
 ├── Application/        // UseCases, DTOs, Lógica
@@ -59,6 +60,7 @@ app/
 │       ├── Controllers/
 │       ├── Requests/   // Validaciones de entrada
 │       └── Resources/  // JSON API Resources
+```
 
 ##✅ Funcionalidades incluidas
 CRUD: plans, companies, subscriptions, users
