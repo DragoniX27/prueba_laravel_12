@@ -1,61 +1,131 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Prueba Laravel 12 – API de Subscripciones
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este proyecto es la prueba técnica para el backend **Senior Backend Laravel 12 + MySQL 8**, siguiendo **Arquitectura Limpia (DDD/Hexagonal)** y los siguientes requerimientos:
 
-## About Laravel
+- **Laravel 12** + PHP 8.4
+- **Docker / Docker Compose** para entorno aislado
+- **MySQL 8** como base de datos
+- **API RESTful** con versionado (`/api/v1`)
+- **Autenticación** con **Laravel Sanctum**
+- **Roles & Permisos** con **Spatie Laravel Permission**
+- **SoftDeletes**, **suscripciones**, y control de límite de usuarios por plan
+- **DDD / Clean Architecture**: Capas de Domain, Application, Infrastructure, Interfaces
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Quick Start
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. Clona el repositorio
+```bash
+git clone git@github.com:DragoniX27/prueba_laravel_12.git
+cd prueba_laravel_12
+2. Compone el proyecto
 
-## Learning Laravel
+docker-compose up -d --build
+3. Configura .env y clave
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+docker exec -it laravel-app php artisan key:generate
+4. Ejecuta migraciones y seeders
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+docker exec -it laravel-app php artisan migrate --seed
+5. ¡Listo! Visita: http://localhost:8000/api/v1
+🔐 Autenticación (Sanctum)
+POST /api/v1/login → { email, password }
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Respuesta: { "access_token": "...", "token_type": "Bearer" }
 
-## Laravel Sponsors
+Guard: sanctum
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Valida que la compañía del usuario tenga suscripción activa
 
-### Premium Partners
+POST /api/v1/logout
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Protegido con auth:sanctum
 
-## Contributing
+📊 Roles y permisos (Spatie)
+Roles definidos en RoleSeeder con guard sanctum
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Se usan middlewares:
 
-## Code of Conduct
+role:admin
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+permission:edit companies
 
-## Security Vulnerabilities
+Middleware registrado en bootstrap/app.php con:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+php
+$middleware->alias([
+  'role' => Spatie\Permission\Middlewares\RoleMiddleware::class,
+  'permission' => Spatie\Permission\Middlewares\PermissionMiddleware::class,
+]);
+🧭 Estructura del proyecto
+text
+app/
+├── Domain/             // Entidades, ValueObjects, Reglas
+├── Application/        // UseCases, DTOs, Lógica
+├── Infrastructure/
+│   └── Persistence/    // Eloquent, Repositorios
+├── Interfaces/
+│   └── Http/
+│       ├── Controllers/
+│       ├── Requests/   // Validaciones de entrada
+│       └── Resources/  // JSON API Resources
+✅ Funcionalidades incluidas
+CRUD: plans, companies, subscriptions, users
 
-## License
+SoftDeletes activado en Plan y Company
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Al crear/actualizar Company:
+
+Si viene plan_id distinto al actual → crea nueva suscripción y desactiva la anterior
+
+En StoreUserRequest: valida que la compañía no supere el límite de usuarios del plan
+
+hasOneThrough en Companie para acceder directamente al Plan activo
+
+🧪 Pruebas
+Incluye factories y seeder inicial:
+
+UserFactory asigna rol automáticamente
+
+RoleSeeder, PlanSeeder, CompanySeeder, SubscriptionSeeder, UserSeeder
+
+Test de login, creación de usuario y validación de límite
+
+Puedes agregar feature tests con Pest/PHPUnit para:
+
+Autenticación
+
+Creación de usuarios
+
+Validación de límite de usuarios
+
+📘 Insomnia / Postman
+Dentro del directorio hay un ejemplo prueba_laravel_12.postman_collection.json que incluye:
+
+Login → guarda auth_token en variable de entorno
+
+Demás peticiones protegidas y logout
+
+✍️ Sugerencias para mejorar
+Agregar Swagger/OpenAPI docs
+
+Recursos paginados (ResourceCollection) en responses
+
+Soporte para tenant_id en multiempresas
+
+Logs, auditoría e integración con Sentry
+
+Tests end-to-end (Laravel Dusk o Pest Browser)
+
+🛠️ ¿Problemas?
+Verifica:
+
+.env: conexión mysql, variables de Docker
+
+Contenedores: docker ps que muestre laravel-app y laravel-mysql
+
+Logs en storage/logs/laravel.log
+
+Rutas: php artisan route:list
+
