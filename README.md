@@ -33,8 +33,8 @@ Protegido con auth:sanctum
 
 ---
 
-##📊 Roles y permisos (Spatie)
-###Roles definidos en RoleSeeder con guard sanctum
+## 📊 Roles y permisos (Spatie)
+### Roles definidos en RoleSeeder con guard sanctum
 
 Se usan middlewares:
 
@@ -42,12 +42,14 @@ role:admin
 
 Middleware registrado en bootstrap/app.php con:
 
-php
+```php
 $middleware->alias([
   'role' => Spatie\Permission\Middlewares\RoleMiddleware::class,
   'permission' => Spatie\Permission\Middlewares\PermissionMiddleware::class,
 ]);
-##🧭 Estructura del proyecto
+```
+
+## 🧭 Estructura del proyecto
 
 ```text
 app/
@@ -62,10 +64,10 @@ app/
 │       └── Resources/  // JSON API Resources
 ```
 
-##✅ Funcionalidades incluidas
+## ✅ Funcionalidades incluidas
 CRUD: plans, companies, subscriptions, users
 
-##🛠️ ¿Problemas?
+## 🛠️ ¿Problemas?
 Verifica:
 
 .env: conexión mysql, variables de Docker
