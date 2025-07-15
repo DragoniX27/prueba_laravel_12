@@ -16,40 +16,28 @@ Este proyecto es la prueba técnica para el backend **Senior Backend Laravel 12 
 ## 🚀 Quick Start
 
 ### 1. Clona el repositorio
+
 ```bash
 git clone git@github.com:DragoniX27/prueba_laravel_12.git
-cd prueba_laravel_12
-2. Compone el proyecto
+```bash
 
-docker-compose up -d --build
-3. Configura .env y clave
+### 2. Monta el proyecto
+```bash
+./setup.sh
+```bash
 
-docker exec -it laravel-app php artisan key:generate
-4. Ejecuta migraciones y seeders
-
-docker exec -it laravel-app php artisan migrate --seed
-5. ¡Listo! Visita: http://localhost:8000/api/v1
-🔐 Autenticación (Sanctum)
-POST /api/v1/login → { email, password }
-
-Respuesta: { "access_token": "...", "token_type": "Bearer" }
-
-Guard: sanctum
-
-Valida que la compañía del usuario tenga suscripción activa
-
-POST /api/v1/logout
+### 3. ¡Listo! Visita: http://localhost:8000/api/login para loguearte
 
 Protegido con auth:sanctum
 
-📊 Roles y permisos (Spatie)
-Roles definidos en RoleSeeder con guard sanctum
+---
+
+##📊 Roles y permisos (Spatie)
+###Roles definidos en RoleSeeder con guard sanctum
 
 Se usan middlewares:
 
 role:admin
-
-permission:edit companies
 
 Middleware registrado en bootstrap/app.php con:
 
@@ -58,7 +46,8 @@ $middleware->alias([
   'role' => Spatie\Permission\Middlewares\RoleMiddleware::class,
   'permission' => Spatie\Permission\Middlewares\PermissionMiddleware::class,
 ]);
-🧭 Estructura del proyecto
+##🧭 Estructura del proyecto
+
 text
 app/
 ├── Domain/             // Entidades, ValueObjects, Reglas
@@ -70,55 +59,11 @@ app/
 │       ├── Controllers/
 │       ├── Requests/   // Validaciones de entrada
 │       └── Resources/  // JSON API Resources
-✅ Funcionalidades incluidas
+
+##✅ Funcionalidades incluidas
 CRUD: plans, companies, subscriptions, users
 
-SoftDeletes activado en Plan y Company
-
-Al crear/actualizar Company:
-
-Si viene plan_id distinto al actual → crea nueva suscripción y desactiva la anterior
-
-En StoreUserRequest: valida que la compañía no supere el límite de usuarios del plan
-
-hasOneThrough en Companie para acceder directamente al Plan activo
-
-🧪 Pruebas
-Incluye factories y seeder inicial:
-
-UserFactory asigna rol automáticamente
-
-RoleSeeder, PlanSeeder, CompanySeeder, SubscriptionSeeder, UserSeeder
-
-Test de login, creación de usuario y validación de límite
-
-Puedes agregar feature tests con Pest/PHPUnit para:
-
-Autenticación
-
-Creación de usuarios
-
-Validación de límite de usuarios
-
-📘 Insomnia / Postman
-Dentro del directorio hay un ejemplo prueba_laravel_12.postman_collection.json que incluye:
-
-Login → guarda auth_token en variable de entorno
-
-Demás peticiones protegidas y logout
-
-✍️ Sugerencias para mejorar
-Agregar Swagger/OpenAPI docs
-
-Recursos paginados (ResourceCollection) en responses
-
-Soporte para tenant_id en multiempresas
-
-Logs, auditoría e integración con Sentry
-
-Tests end-to-end (Laravel Dusk o Pest Browser)
-
-🛠️ ¿Problemas?
+##🛠️ ¿Problemas?
 Verifica:
 
 .env: conexión mysql, variables de Docker
