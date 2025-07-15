@@ -21,6 +21,11 @@ class Companie extends Model
         return $this->hasMany(Subscription::class, 'company_id');
     }
 
+    public function activeSubscription()
+    {
+        return $this->hasOne(Subscription::class, 'company_id')->where('is_active', true);
+    }
+
     public function users()
     {
         return $this->hasMany(User::class, 'company_id');

@@ -17,6 +17,10 @@ class AuthService
 
         $user = Auth::user();
 
+        if (!$user->company->activeSubscription) {
+            return response()->json(['message' => 'La compañía no tiene una suscripción activa.'], 403);
+        }
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
